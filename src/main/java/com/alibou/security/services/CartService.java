@@ -4,6 +4,7 @@ import com.alibou.security.models.Cart;
 import com.alibou.security.models.OrderItem;
 import com.alibou.security.repositories.CartRepo;
 import com.alibou.security.repositories.OrderItemRepo;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +24,9 @@ public class CartService {
     // CRUD
 
     // Create
-    public  void saveCart(Cart cart)
+    public  Cart saveCart(Cart cart)
     {
-        cartRepo.save(cart);
+      return   cartRepo.save(cart);
     }
 
     // Read
@@ -34,19 +35,20 @@ public class CartService {
     }
 
     public Cart getCart(Long cart_id){
-        return cartRepo.findById(cart_id);
+        return cartRepo.findById(cart_id)
+                .orElseThrow(()-> new EntityNotFoundException("Cart for this ID not found"));
     }
 
     // Update
     public void editCart(Cart cart,Long cart_id)
     {
-        Cart cartForSave = cartRepo.findById(cart_id);
+        Cart cartForSave = getCart(cart_id);
         // todo add edit there
     }
 
     // Delete
-    public  void  deleteCart(Long id){
-        Cart cart = cartRepo.findById(id);
+    public  void  deleteCart(Long cartId){
+        Cart cart = getCart(cartId);
         cartRepo.delete(cart);
     }
 

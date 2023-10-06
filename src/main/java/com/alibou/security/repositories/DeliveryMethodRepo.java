@@ -4,9 +4,11 @@ import com.alibou.security.models.DeliveryMethod;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface DeliveryMethodRepo extends JpaRepository<DeliveryMethod,Integer> {
 
-    DeliveryMethod findByDeliveryId(Long id);
+   Optional<DeliveryMethod> findByDeliveryId(Long id);
 
 }

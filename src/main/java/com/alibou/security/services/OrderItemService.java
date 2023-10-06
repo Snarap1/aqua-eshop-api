@@ -3,6 +3,7 @@ package com.alibou.security.services;
 import com.alibou.security.models.DeliveryMethod;
 import com.alibou.security.models.OrderItem;
 import com.alibou.security.repositories.OrderItemRepo;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,9 @@ public class OrderItemService {
     // CRUD
 
     // Create
-    public  void saveItem(OrderItem orderItem)
+    public  OrderItem createItem(OrderItem orderItem)
     {
-        orderItemRepo.save(orderItem);
+        return orderItemRepo.save(orderItem);
     }
 
     // Read
@@ -34,18 +35,19 @@ public class OrderItemService {
     }
 
     public OrderItem getItem(Long item_id){
-        return orderItemRepo.findById(item_id);
+        return orderItemRepo.findById(item_id)
+                .orElseThrow(()->new EntityNotFoundException("Item not found"));
     }
 
     // Update
     public void editItem(OrderItem orderItem,Long item_id)
     {
-        OrderItem itemForSave = orderItemRepo.findById(item_id);
+        OrderItem itemForSave = getItem(item_id);
         // todo add edit there
     }
     @Transactional
     public void updateQuantity(Long orderItemId, int newQuantity) {
-        OrderItem orderItem = orderItemRepo.findById(orderItemId);
+        OrderItem orderItem = getItem(orderItemId);
         orderItem.setQuantity(newQuantity);
         orderItemRepo.save(orderItem);
     }
@@ -53,15 +55,15 @@ public class OrderItemService {
     @Transactional
     public  void changeDeliveryMethod(Long orderItemId, DeliveryMethod deliveryMethod)
     {
-        OrderItem orderItem = orderItemRepo.findById(orderItemId);
+        OrderItem orderItem = getItem(orderItemId);
         orderItem.setDeliveryMethod(deliveryMethod);
         orderItemRepo.save(orderItem);
     }
 
 
     // Delete
-    public  void  deleteItem(Long id){
-        OrderItem orderItem = orderItemRepo.findById(id);
+    public  void  deleteItem(Long itemId){
+        OrderItem orderItem = getItem(itemId);
         orderItemRepo.delete(orderItem);
     }
 }

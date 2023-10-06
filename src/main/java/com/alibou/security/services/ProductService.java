@@ -3,6 +3,7 @@ package com.alibou.security.services;
 import com.alibou.security.models.OrderItem;
 import com.alibou.security.models.Product;
 import com.alibou.security.repositories.ProductRepo;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +23,10 @@ public class ProductService {
     // CRUD
 
     // Create
-    public  void saveProduct(Product product)
+    public  Product createProduct(Product product)
     {
-        productRepo.save(product);
+     Product product1 =    productRepo.save(product);
+        return product1;
     }
 
     // Read
@@ -33,21 +35,23 @@ public class ProductService {
     }
 
     public Product getProduct(Long product_id){
-        return productRepo.findById(product_id);
+        return productRepo.findById(product_id).orElseThrow(()-> new EntityNotFoundException("Product not found"));
     }
 
     // Update
     public void editProduct(Product product,Long product_id)
     {
-        Product productForSave = productRepo.findById(product_id);
+        Product productForSave = getProduct(product_id);
         productForSave.setName(product.getName());
         productForSave.setDescription(product.getDescription());
         productForSave.setPrice(product.getPrice());
+
+        productRepo.save(productForSave);
     }
 
     // Delete
     public  void  deleteProduct(Long product_id){
-        Product product = productRepo.findById(product_id);
+        Product product = getProduct(product_id);
         productRepo.delete(product);
     }
 

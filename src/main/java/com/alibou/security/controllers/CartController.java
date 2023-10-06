@@ -1,17 +1,12 @@
 package com.alibou.security.controllers;
 
 import com.alibou.security.models.Cart;
-import com.alibou.security.models.DeliveryMethod;
-import com.alibou.security.models.OrderItem;
-import com.alibou.security.models.Product;
 import com.alibou.security.services.CartService;
-import com.alibou.security.services.DeliveryMethodService;
-import com.alibou.security.services.OrderItemService;
-import com.alibou.security.services.ProductService;
-import com.alibou.security.user.User;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,58 +16,52 @@ import java.util.List;
 public class CartController {
 
     private  final CartService cartService;
-    private final DeliveryMethodService methodService;
-    private final OrderItemService orderItemService;
-    private final ProductService productService;
+
 
     @Autowired
-    public CartController(CartService cartService, DeliveryMethodService methodService, OrderItemService orderItemService, ProductService productService) {
+    public CartController(CartService cartService) {
         this.cartService = cartService;
-        this.methodService = methodService;
-        this.orderItemService = orderItemService;
-        this.productService = productService;
     }
-//    @PostMapping("")
-//    public ResponseEntity<String> addToCart(@AuthenticationPrincipal User user, @RequestBody long productId){
-//        OrderItem orderItem = new OrderItem();
-//        Product product = productService.getProduct(productId);
-//        orderItem.setProduct(product);
-//        orderItem.setQuantity(1);
-//        orderItem.setCart(user.getCart());
-//        orderItemService.saveItem(orderItem);
-//        return ResponseEntity.ok("Product added to cart");
-//    }
-//
-//    @PutMapping("/{orderItemId}/quantity")
-//    public ResponseEntity<String> updateQuantity(@PathVariable Long orderItemId, @RequestParam int newQuantity) {
-//            orderItemService.updateQuantity(orderItemId, newQuantity);
-//            return ResponseEntity.ok("Количество товаров в заказе успешно обновлено.");
-//    }
-//
-//    @PutMapping("/{orderItemId}/delivery")
-//    public ResponseEntity<String> updateDeliveryMethod(@PathVariable Long orderItemId, @RequestParam DeliveryMethod deliveryMethod) {
-//        orderItemService.changeDeliveryMethod(orderItemId,deliveryMethod);
-//        return ResponseEntity.ok("Способ доставки изменён");
-//    }
 
+
+    @PostMapping
+    public  ResponseEntity<Cart> createCart(@RequestBody Cart cart){
+        Cart creeatedCart = cartService.saveCart(cart);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creeatedCart);
+    }
 
     @GetMapping("/all")
-    public List<Cart> getAllCarts(){
-        return cartService.getAllCarts();
+    public ResponseEntity<List<Cart>> getAllCarts(){
+        List<Cart> carts = cartService.getAllCarts();
+        return ResponseEntity.ok(carts);
     }
 
     @GetMapping("/{cartId}")
-    public Cart getCartById(@PathVariable Long cartId){
-        return cartService.getCart(cartId);
+    public ResponseEntity<?> getCartById(@PathVariable Long cartId){
+        try {
+            Cart cart = cartService.getCart(cartId);
+            return ResponseEntity.ok(cart);
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart not found");
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        }
     }
 
     @DeleteMapping("/{cartId}")
     public  ResponseEntity<String> deleteCart(@PathVariable Long cartId)
     {
-        cartService.deleteCart(cartId);
-        return  ResponseEntity.ok("Cart was deleted");
+        try {
+            cartService.deleteCart(cartId);
+            return  ResponseEntity.ok("Cart was deleted");
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart not found");
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        }
+
     }
-
-
 
 }

@@ -2,7 +2,9 @@ package com.alibou.security.controllers;
 
 import com.alibou.security.models.DeliveryMethod;
 import com.alibou.security.services.DeliveryMethodService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
@@ -20,33 +22,54 @@ public class DeliveryMethodController {
         this.deliveryMethodService = deliveryMethodService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<String> createDelivMethod(@RequestBody DeliveryMethod deliveryMethod){
-        deliveryMethodService.saveDM(deliveryMethod);
-        return ResponseEntity.ok("Delivery method was added");
+    @PostMapping("/")
+    public ResponseEntity<DeliveryMethod> createDelivMethod(@RequestBody DeliveryMethod deliveryMethod){
+        return ResponseEntity.status(HttpStatus.CREATED).body(deliveryMethodService.createDM(deliveryMethod));
     }
 
     @GetMapping("/all")
-    public List<DeliveryMethod> getAllDelivMethods(){
-        return  deliveryMethodService.getAllMethods();
+    public ResponseEntity <List<DeliveryMethod>> getAllDelivMethods(){
+        List<DeliveryMethod> deliveryMethods = deliveryMethodService.getAllMethods();
+        return  ResponseEntity.ok(deliveryMethods);
     }
 
     @GetMapping("/{methodId}")
-    public DeliveryMethod getDelivMethod(@PathVariable Long methodId)
+    public ResponseEntity <?> getDelivMethod(@PathVariable Long methodId)
     {
-        return deliveryMethodService.getMethod(methodId);
+        try {
+            DeliveryMethod deliveryMethod = deliveryMethodService.getMethod(methodId);
+            return ResponseEntity.ok(deliveryMethod);
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Delivery method not found");
+        }catch (Exception e){
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        }
     }
 
     @PatchMapping("/{methodId}")
     public ResponseEntity<String> editDelivMethod(@PathVariable Long methodId, @RequestBody DeliveryMethod deliveryMethod){
-        deliveryMethodService.editDM(deliveryMethod,methodId);
-        return  ResponseEntity.ok("Method edited");
+        try {
+            deliveryMethodService.editDM(deliveryMethod,methodId);
+            return  ResponseEntity.ok("Method edited");
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Delivery method not found");
+        }catch (Exception e){
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        }
+
     }
 
     @DeleteMapping("/{methodId}")
     public  ResponseEntity<String> deleteDelivMethod(@PathVariable Long methodId)
     {
-        deliveryMethodService.deleteDM(methodId);
-        return  ResponseEntity.ok("Method deleted");
+        try {
+            deliveryMethodService.deleteDM(methodId);
+            return  ResponseEntity.ok("Method deleted");
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Delivery method not found");
+        }catch (Exception e){
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        }
     }
 }
+
