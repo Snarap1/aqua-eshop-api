@@ -1,4 +1,5 @@
 package com.alibou.security.models;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,37 +7,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
+import java.time.LocalDate;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class OrderItem {
+@Setter
+@Getter
+@Entity(name = "Address")
+public class Address {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int quantity;
+    private  String city;
+    private  String street;
+    private int entrance;
+    private int floor;
+    private  int appartment;
+    private LocalDate date;
+    private Time time;
 
-    // Связь с товаром
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    // Связь с заказом
-    @ManyToOne
-    @JsonIgnore
-    private Cart cart;
-
-    @ManyToOne
+    @OneToOne
     @JsonIgnore
     private  Order order;
 
 
-    public double getTotalPrice() {
-        return (quantity * product.getPrice());
-    }
-
 }
-

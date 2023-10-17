@@ -1,6 +1,5 @@
 package com.alibou.security.services;
 
-import com.alibou.security.models.DeliveryMethod;
 import com.alibou.security.models.OrderItem;
 import com.alibou.security.repositories.OrderItemRepo;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,9 +23,9 @@ public class OrderItemService {
     // CRUD
 
     // Create
-    public  OrderItem createItem(OrderItem orderItem)
+    public void createItem(OrderItem orderItem)
     {
-        return orderItemRepo.save(orderItem);
+        orderItemRepo.save(orderItem);
     }
 
     // Read
@@ -52,18 +51,14 @@ public class OrderItemService {
         orderItemRepo.save(orderItem);
     }
 
-    @Transactional
-    public  void changeDeliveryMethod(Long orderItemId, DeliveryMethod deliveryMethod)
-    {
-        OrderItem orderItem = getItem(orderItemId);
-        orderItem.setDeliveryMethod(deliveryMethod);
-        orderItemRepo.save(orderItem);
-    }
-
 
     // Delete
     public  void  deleteItem(Long itemId){
         OrderItem orderItem = getItem(itemId);
+        orderItemRepo.delete(orderItem);
+    }
+
+    public void deleteItemByClass(OrderItem orderItem){
         orderItemRepo.delete(orderItem);
     }
 }

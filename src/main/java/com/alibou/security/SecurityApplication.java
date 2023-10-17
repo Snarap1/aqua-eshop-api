@@ -50,7 +50,6 @@ public class SecurityApplication {
 
 insert into product (price, description, name) values (200,'best of the best', 'aqua5');
 insert into product (price, description, name) values (130,'so so', 'aqua4');
-insert into delivery_method (delivery_price, delivery_name) values (20,'deliver + master');
-insert  into  delivery_method (delivery_price, delivery_name) VALUES (0,'delivery')
-
+insert into delivery_method (delivery_price, delivery_name) values (20.1,'deliver + master');
+insert  into  delivery_method (delivery_price, delivery_name) VALUES (12.8,'delivery')
  */

@@ -1,14 +1,23 @@
 package com.alibou.security.controllers;
 
+import com.alibou.security.enums.OrderStatus;
 import com.alibou.security.models.Cart;
+import com.alibou.security.models.Order;
+import com.alibou.security.models.OrderItem;
 import com.alibou.security.services.CartService;
+import com.alibou.security.services.OrderItemService;
+import com.alibou.security.services.OrderService;
+import com.alibou.security.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,11 +25,15 @@ import java.util.List;
 public class CartController {
 
     private  final CartService cartService;
+    private  final OrderItemService orderItemService;
+    private  final OrderService orderService;
 
 
     @Autowired
-    public CartController(CartService cartService) {
+    public CartController(CartService cartService, OrderItemService orderItemService, OrderService orderService) {
         this.cartService = cartService;
+        this.orderItemService = orderItemService;
+        this.orderService = orderService;
     }
 
 
@@ -49,6 +62,14 @@ public class CartController {
         }
     }
 
+    @GetMapping("")
+    public ResponseEntity<Cart> getCartByUser(@AuthenticationPrincipal User user){
+       Cart cart = cartService.getCartByUser(user);
+      return ResponseEntity.ok(cart);
+    }
+
+
+
     @DeleteMapping("/{cartId}")
     public  ResponseEntity<String> deleteCart(@PathVariable Long cartId)
     {
@@ -62,6 +83,42 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
         }
 
+    }
+
+
+    @PostMapping("/buy")
+    public ResponseEntity<String> buyItems(@AuthenticationPrincipal User user){
+
+
+        Cart cart = user.getCart();
+        Order newOrder = new  Order();
+        orderService.saveOrder(newOrder);
+
+        List<OrderItem> items = cart.getOrderItems();
+        List<OrderItem> orderItems   = new ArrayList<>();
+
+        List<OrderItem> list = new ArrayList<>();
+        cart.setOrderItems(list);
+        cartService.saveCart(cart);
+
+        for(OrderItem item: items){
+            item.setCart(null);
+            item.setOrder(newOrder);
+            orderItems.add(item);
+            orderItemService.createItem(item);
+        }
+
+        newOrder.setOrderItems(orderItems);
+        newOrder.setUser(cart.getUser());
+        newOrder.setTotalAmount(cart.calculateTotalCost());
+        newOrder.setStatus(OrderStatus.PROCESSING);
+        newOrder.setDeliveryMethod(cart.getDeliveryMethod());
+        newOrder.setCreatedAt(LocalDate.now());
+
+        orderService.saveOrder(newOrder);
+
+
+        return ResponseEntity.ok("offer done !");
     }
 
 }

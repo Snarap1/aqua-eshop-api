@@ -1,5 +1,7 @@
 package com.alibou.security.models;
+import com.alibou.security.enums.DeliveryMethods;
 import com.alibou.security.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,21 +22,29 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date orderDate;
     private double totalCost;
 
     // Связь с товарами в заказе
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems ;//= new ArrayList<>();
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+    private List<OrderItem> orderItems; //= new ArrayList<>();
 
     @OneToOne
+    @JsonIgnore
     private User user;
-    public double calculateTotalCost() {
+
+    private DeliveryMethods deliveryMethod = DeliveryMethods.DELIVERY;
+
+      public double calculateTotalCost() {
         double cost = 0.0;
         for (OrderItem item : orderItems) {
             cost += item.getTotalPrice();
         }
-        totalCost = cost;
+        totalCost = cost + deliveryMethod.getCost();
         return totalCost;
     }
+
+
+
 }
+
+

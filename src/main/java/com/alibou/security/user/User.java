@@ -1,6 +1,7 @@
 package com.alibou.security.user;
 
 import com.alibou.security.models.Cart;
+import com.alibou.security.models.Order;
 import com.alibou.security.token.Token;
 import jakarta.persistence.*;
 
@@ -35,6 +36,9 @@ public class User implements UserDetails {
 
   @OneToOne
   private Cart cart;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+  private  List<Order> orders;
 
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;

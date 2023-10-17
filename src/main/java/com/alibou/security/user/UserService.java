@@ -32,4 +32,8 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
+
+    public  void saveUser(User user){
+        repository.save(user);
+    }
 }

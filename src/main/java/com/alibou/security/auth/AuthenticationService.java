@@ -6,9 +6,9 @@ import com.alibou.security.services.CartService;
 import com.alibou.security.token.Token;
 import com.alibou.security.token.TokenRepository;
 import com.alibou.security.token.TokenType;
-import com.alibou.security.user.Role;
 import com.alibou.security.user.User;
 import com.alibou.security.user.UserRepository;
+import com.alibou.security.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,10 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,7 +31,9 @@ public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
 
   private final CartService cartService;
+  private  final UserService userService;
   public AuthenticationResponse register(RegisterRequest request) {
+
     var user = User.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
@@ -42,11 +41,14 @@ public class AuthenticationService {
         .password(passwordEncoder.encode(request.getPassword()))
         .role(request.getRole())
         .build();
+
     var savedUser = repository.save(user);
 
     Cart cart = new Cart();
-    cart.setUser(savedUser);
+    cart.setUser(user);
     cartService.saveCart(cart);
+    user.setCart(cart);
+    userService.saveUser(user);
 
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
