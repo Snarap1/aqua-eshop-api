@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static com.alibou.security.user.Role.ADMIN;
 import static com.alibou.security.user.Role.MANAGER;
@@ -47,9 +48,23 @@ public class SecurityApplication {
 
 
 /*
-
 insert into product (price, description, name) values (200,'best of the best', 'aqua5');
 insert into product (price, description, name) values (130,'so so', 'aqua4');
 insert into delivery_method (delivery_price, delivery_name) values (20.1,'deliver + master');
 insert  into  delivery_method (delivery_price, delivery_name) VALUES (12.8,'delivery')
  */
+
+/*
+todo:
+		- convert order to PDF file
+		- DTO
+		
+		- look for endpoints
+
+		- store picture and link
+
+
+done:
+- Exceptions
+
+*/

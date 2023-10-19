@@ -40,15 +40,12 @@ public class CartService {
 
     @Transactional
     public Cart getCart(Long cart_id){
-        Cart cart = cartRepo.findById(cart_id)
+        return cartRepo.findById(cart_id)
                 .orElseThrow(()-> new EntityNotFoundException("Cart for this ID not found"));
-        cart.calculateTotalCost();
-        cartRepo.save(cart);
-        return cart;
     }
 
     public  Cart getCartByUser(User user){
-        return  cartRepo.getCartByUser(user);
+        return cartRepo.getCartByUser(user);
     }
 
     // Update

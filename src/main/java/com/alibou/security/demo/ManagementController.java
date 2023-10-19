@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Management")
 public class ManagementController {
 
-
     @Operation(
             description = "Get endpoint for manager",
             summary = "This is a summary for management get endpoint",
@@ -29,8 +28,8 @@ public class ManagementController {
                             responseCode = "403"
                     )
             }
-
     )
+
     @GetMapping
     public String get() {
         return "GET:: management controller";
@@ -48,3 +47,8 @@ public class ManagementController {
         return "DELETE:: management controller";
     }
 }
+
+
+
+
+

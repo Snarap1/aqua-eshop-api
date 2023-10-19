@@ -64,7 +64,10 @@ public class CartController {
 
     @GetMapping("")
     public ResponseEntity<Cart> getCartByUser(@AuthenticationPrincipal User user){
-       Cart cart = cartService.getCartByUser(user);
+        Cart cart = cartService.getCartByUser(user);
+        double cost = cart.calculateTotalCost();
+        cart.setTotalCost(cost);
+        cartService.saveCart(cart);
       return ResponseEntity.ok(cart);
     }
 
@@ -110,7 +113,7 @@ public class CartController {
 
         newOrder.setOrderItems(orderItems);
         newOrder.setUser(cart.getUser());
-        newOrder.setTotalAmount(cart.calculateTotalCost());
+        newOrder.setTotalAmount(cart.getTotalCost());
         newOrder.setStatus(OrderStatus.PROCESSING);
         newOrder.setDeliveryMethod(cart.getDeliveryMethod());
         newOrder.setCreatedAt(LocalDate.now());
@@ -122,3 +125,5 @@ public class CartController {
     }
 
 }
+
+

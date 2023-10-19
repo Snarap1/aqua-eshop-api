@@ -22,7 +22,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double totalCost;
+    private double totalCost = 0.0;
 
     // Связь с товарами в заказе
     @OneToMany(mappedBy = "cart", cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
@@ -39,8 +39,7 @@ public class Cart {
         for (OrderItem item : orderItems) {
             cost += item.getTotalPrice();
         }
-        totalCost = cost + deliveryMethod.getCost();
-        return totalCost;
+          return cost + deliveryMethod.getCost();
     }
 
 

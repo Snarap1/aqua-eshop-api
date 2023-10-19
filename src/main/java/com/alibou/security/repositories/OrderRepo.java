@@ -18,4 +18,6 @@ public interface OrderRepo extends JpaRepository<Order,Integer> {
 
     List<Order> findByStatus(OrderStatus status);
 
+    List<Order>  findByUserAndStatus(User user, OrderStatus status);
+
 }

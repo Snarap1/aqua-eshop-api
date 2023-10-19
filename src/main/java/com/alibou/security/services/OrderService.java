@@ -40,6 +40,11 @@ public class OrderService {
         return orderRepo.findByUser(user);
     }
 
+    public  List<Order> getOrdersByUserAndStatus(User user,OrderStatus status){
+        return orderRepo.findByUserAndStatus(user,status);
+    }
+
+
     public  List<Order> getOrdersByStatus(OrderStatus status){
         return orderRepo.findByStatus(status);
     }

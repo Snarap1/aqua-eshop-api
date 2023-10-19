@@ -1,5 +1,8 @@
 package com.alibou.security.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum OrderStatus {
     PROCESSING("В обработке"),
     SHIPPED("Доставляется"),
@@ -11,7 +14,4 @@ public enum OrderStatus {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 }
