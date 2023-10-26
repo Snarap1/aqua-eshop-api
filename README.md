@@ -57,75 +57,64 @@ order-controller
 |GET |/api/v1/order/downloadOrderDetails/{orderId}||
 |GET |/api/v1/order/all||
 
-|Management
-|This is a summary for management get endpoint
-|GET /api/v1/management
-|PUT /api/v1/management
-|POST /api/v1/management
-|DELETE /api/v1/management
-|product-controller
-|POST /api/v1/product/
-|GET /api/v1/product/{productId}
-|DELETE /api/v1/product/{productId}
-|PATCH /api/v1/product/{productId}
-|GET /api/v1/product/all
-|order-item-controller
-|POST /api/v1/item/
-|GET /api/v1/item/{itemId}
-|GET /api/v1/item/all
-|DELETE /api/v1/item/{itemID}
-|cart-controller
-|GET /api/v1/cart
-|POST /api/v1/cart
-|POST /api/v1/cart/buy
-|GET /api/v1/cart/{cartId}
-|DELETE /api/v1/cart/{cartId}
-|GET /api/v1/cart/all
-|authentication-controller
-|POST /api/v1/auth/register
-|POST /api/v1/auth/refresh-token
-|POST /api/v1/auth/authenticate
-|address-controller
-|POST /api/v1/address/
-|PATCH /api/v1/address/{orderId}
-|GET /api/v1/address/{addressId}
-|DELETE /api/v1/address/{addressId}
-|GET /api/v1/address/all
-|user-controller
-|PATCH /api/v1/user
-|admin-controller
-|GET /api/v1/admin
-
-
+Management
 | Method  | URL  | Description |
 | :------------ |:---------------:| -----:|
-| POST   |/auth/register| Registration  |
-| POST     | /auth/authenticate       |   Authentication |
-| POST | /auth/refresh-token        |    token refresh (set Bearer-token in postman, or paste it in Swagger) |
+|GET |/api/v1/management||
+|PUT |/api/v1/management||
+|POST |/api/v1/management||
+|DELETE |/api/v1/management||
 
+product-controller
 | Method  | URL  | Description |
 | :------------ |:---------------:| -----:|
-| POST   |/posts/{userId}| Create post |
-| POST     | /posts/image/{postId}       | attach image(Postman -> body-> form-data: key 'image': chose file in your system) |
-| PATCH | /posts/{postId}     |    edit post |
-| DELETE | /posts/{postId}   |    delete post |
-| GET | /posts/{postId}     |   get 1 post |
-| GET | /posts/of/{userId}     |    get all User  posts  |
-| GET | /posts/activity/{userId}    | action feed of those to whom the user is following |
+|POST |/api/v1/product/||
+|GET |/api/v1/product/{productId}||
+|DELETE |/api/v1/product/{productId}||
+|PATCH |/api/v1/product/{productId}||
+|GET |/api/v1/product/all||
 
+order-item-controller
 | Method  | URL  | Description |
 | :------------ |:---------------:| -----:|
-| GET  |/users/{userId}| Get information about user |
-| PATCH  |/users/{userId}}| edit user information |
-| DELETE  |/users/{userId}}| delete user |
-| GET  |/users/{userId}/subscriptions}|subscriptions list for user |
-| GET  |/users/{userId}/friends| Users friend list|
-| GET  |/users/{userId}/friendRequests| friend requests list |
-| GET  |/users/{userId}/followers| User  Followers list  |
-| POST  |/users/{senderId}/friend-request/{receiverId}| send friend request |
-| POST  |/users/{receiverId}/accept-friend-request/{senderId}| Accept friend request|
-| POST  |/users/{receiverId}/reject-friend-request/{senderId}| Decline friend request |
-| POST  |/users/{userId}/remove-friend/{friendId}| Remove friend|
-| POST  |/users/{userId}/unfollow/{subscriptionId}| Unfollow |
+|POST |/api/v1/item/||
+|GET |/api/v1/item/{itemId}||
+|GET |/api/v1/item/all||
+|DELETE |/api/v1/item/{itemID}||
+
+cart-controller
+| Method  | URL  | Description |
+| :------------ |:---------------:| -----:|
+|GET |/api/v1/cart||
+|POST |/api/v1/cart||
+|POST |/api/v1/cart/buy||
+|GET |/api/v1/cart/{cartId}||
+|DELETE |/api/v1/cart/{cartId}||
+|GET |/api/v1/cart/all||
+
+authentication-controller
+| Method  | URL  | Description |
+| :------------ |:---------------:| -----:|
+|POST /api/v1/auth/register||
+|POST /api/v1/auth/refresh-token||
+|POST /api/v1/auth/authenticate||
+
+address-controller
+| Method  | URL  | Description |
+| :------------ |:---------------:| -----:|
+|POST |/api/v1/address/||
+|PATCH |/api/v1/address/{orderId}||
+|GET |/api/v1/address/{addressId}||
+|DELETE |/api/v1/address/{addressId}||
+|GET |/api/v1/address/all||
+
+user-controller
+| Method  | URL  | Description |
+| :------------ |:---------------:| -----:|
+|PATCH |/api/v1/user||
+
+admin-controller
+| Method  | URL  | Description |
+| :------------ |:---------------:| -----:|
+|GET |/api/v1/admin||
 -------------
-
