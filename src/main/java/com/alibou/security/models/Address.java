@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,22 +17,17 @@ import java.time.LocalDate;
 @Getter
 @Entity(name = "Address")
 public class Address {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private  String city;
     private  String street;
     private int entrance;
     private int floor;
     private  int appartment;
     private LocalDate date;
-    private Time time;
-
+    private LocalTime time;
     @OneToOne
     @JsonIgnore
     private  Order order;
-
-
 }

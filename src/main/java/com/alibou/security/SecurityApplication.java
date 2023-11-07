@@ -58,7 +58,7 @@ insert  into  delivery_method (delivery_price, delivery_name) VALUES (12.8,'deli
 todo:
 		- convert order to PDF file
 		- DTO
-		
+
 		- look for endpoints
 
 		- store picture and link

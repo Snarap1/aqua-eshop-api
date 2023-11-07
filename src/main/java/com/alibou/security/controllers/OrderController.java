@@ -10,7 +10,9 @@ import com.alibou.security.services.*;
 import com.alibou.security.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +57,8 @@ public class OrderController {
 
     @GetMapping("/status")
     public ResponseEntity<List<Order>> getOrderByStatus(OrderStatus orderStatus){
-        return ResponseEntity.ok(orderService.getOrdersByStatus(orderStatus));
+        List<Order> orders = orderService.getOrdersByStatus(orderStatus);
+       return ResponseEntity.ok(orders);
     }
 
 
@@ -115,11 +118,43 @@ public class OrderController {
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-
     }
 
+    @GetMapping("/downloadOrderDetails/{orderId}")
+    public ResponseEntity<?> downloadOrderDetails(@PathVariable Long orderId) {
+        try {
+            Order order = orderService.getOrder(orderId);
+            User user = order.getUser();
+            StringBuilder orderDetails =
+                    new StringBuilder("Заказчик: " + user.getFirstname()
+                            + " " + user.getLastname() + " " + user.getEmail() + "\n" +
+                            "Способ доставки: " + order.getDeliveryMethod().getDisplayName() + "\n"
+                    +"Список товаров: " + "\n");
+
+            for (OrderItem item : order.getOrderItems()) {
+              orderDetails.append(item.getProduct().getName()).append(" количество: ").append(item.getQuantity()).append("\n");
+            }
+
+            orderDetails.append("  Сумма: ").append(order.getTotalAmount()).append("\n");
+            if (order.getAddress() != null){
+                Address address = order.getAddress();
+                orderDetails.append("Адрес доставки: ").append(address.getCity()+" ")
+                        .append(address.getStreet()+" ").append(address.getEntrance()+" ")
+                        .append(address.getFloor()+" ").append(address.getAppartment()+" ")
+                        .append(address.getDate()+" ").append(address.getTime()).append("\n");
+            }
+            byte[] content = orderDetails.toString().getBytes();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "order_"+orderId+".txt");
+
+            return new ResponseEntity<>(content, headers, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Something went wrong");
+        }
+    }
 }
-
-
 
