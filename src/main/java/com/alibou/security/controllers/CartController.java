@@ -91,37 +91,13 @@ public class CartController {
 
     @PostMapping("/buy")
     public ResponseEntity<String> buyItems(@AuthenticationPrincipal User user){
+        try {
+            orderService.buy(user);
+            return ResponseEntity.ok("offer done !");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Something went wrong");
 
-
-        Cart cart = user.getCart();
-        Order newOrder = new  Order();
-        orderService.saveOrder(newOrder);
-
-        List<OrderItem> items = cart.getOrderItems();
-        List<OrderItem> orderItems   = new ArrayList<>();
-
-        List<OrderItem> list = new ArrayList<>();
-        cart.setOrderItems(list);
-        cartService.saveCart(cart);
-
-        for(OrderItem item: items){
-            item.setCart(null);
-            item.setOrder(newOrder);
-            orderItems.add(item);
-            orderItemService.createItem(item);
         }
-
-        newOrder.setOrderItems(orderItems);
-        newOrder.setUser(cart.getUser());
-        newOrder.setTotalAmount(cart.getTotalCost());
-        newOrder.setStatus(OrderStatus.PROCESSING);
-        newOrder.setDeliveryMethod(cart.getDeliveryMethod());
-        newOrder.setCreatedAt(LocalDate.now());
-
-        orderService.saveOrder(newOrder);
-
-
-        return ResponseEntity.ok("offer done !");
     }
 
 }

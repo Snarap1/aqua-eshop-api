@@ -65,9 +65,7 @@ public class OrderController {
     @PatchMapping("/status/{orderId}")
     public ResponseEntity<String> changeStatus(@PathVariable Long orderId,OrderStatus status){
         try {
-            Order order = orderService.getOrder(orderId);
-            order.setStatus(status);
-            orderService.saveOrder(order);
+            orderService.changeStatus(orderId,status);
             return ResponseEntity.ok("Status changed");
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
@@ -79,20 +77,13 @@ public class OrderController {
     @PatchMapping("/{productId}")
     public ResponseEntity<String> addToCart(@AuthenticationPrincipal User user, @PathVariable long productId){
         try {
-            Product product = productService.getProduct(productId);
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(product);
-            orderItem.setQuantity(1);
-            orderItem.setCart(user.getCart());
-            user.getCart().getOrderItems().add(orderItem);
-            orderItemService.createItem(orderItem);
+        orderService.addToCart(productId,user);
+            return ResponseEntity.ok("Product added to cart");
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
         }catch (Exception e){
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Something went wrong");
         }
-
-        return ResponseEntity.ok("Product added to cart");
     }
 
     @PutMapping("/{orderItemId}/quantity")
@@ -110,10 +101,7 @@ public class OrderController {
     @PatchMapping("/address/{orderId}")
     public ResponseEntity<String> setAddress(@PathVariable Long orderId, Long addresId){
         try {
-            Order order = orderService.getOrder(orderId);
-            Address address = addressService.getAddressById(addresId);
-            order.setAddress(address);
-            orderService.saveOrder(order);
+            orderService.setAddress(orderId,addresId);
             return ResponseEntity.ok("Address changed");
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -123,28 +111,8 @@ public class OrderController {
     @GetMapping("/downloadOrderDetails/{orderId}")
     public ResponseEntity<?> downloadOrderDetails(@PathVariable Long orderId) {
         try {
-            Order order = orderService.getOrder(orderId);
-            User user = order.getUser();
-            StringBuilder orderDetails =
-                    new StringBuilder("Заказчик: " + user.getFirstname()
-                            + " " + user.getLastname() + " " + user.getEmail() + "\n" +
-                            "Способ доставки: " + order.getDeliveryMethod().getDisplayName() + "\n"
-                    +"Список товаров: " + "\n");
 
-            for (OrderItem item : order.getOrderItems()) {
-              orderDetails.append(item.getProduct().getName()).append(" количество: ").append(item.getQuantity()).append("\n");
-            }
-
-            orderDetails.append("  Сумма: ").append(order.getTotalAmount()).append("\n");
-            if (order.getAddress() != null){
-                Address address = order.getAddress();
-                orderDetails.append("Адрес доставки: ").append(address.getCity()+" ")
-                        .append(address.getStreet()+" ").append(address.getEntrance()+" ")
-                        .append(address.getFloor()+" ").append(address.getAppartment()+" ")
-                        .append(address.getDate()+" ").append(address.getTime()).append("\n");
-            }
-            byte[] content = orderDetails.toString().getBytes();
-
+            byte[] content = orderService.downloadOrderDetails(orderId);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setContentDispositionFormData("attachment", "order_"+orderId+".txt");

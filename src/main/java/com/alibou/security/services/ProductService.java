@@ -3,8 +3,11 @@ package com.alibou.security.services;
 import com.alibou.security.models.OrderItem;
 import com.alibou.security.models.Product;
 import com.alibou.security.repositories.ProductRepo;
+import com.alibou.security.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +18,11 @@ public class ProductService {
     private  final ProductRepo productRepo;
 
     @Autowired
-    public ProductService(ProductRepo productRepo) {
+    public ProductService(ProductRepo productRepo ) {
         this.productRepo = productRepo;
+
     }
+
 
 
     // CRUD
